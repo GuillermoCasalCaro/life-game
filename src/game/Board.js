@@ -4,7 +4,7 @@ import './game.css'
 
 
 const Board = () => {
-    const [gameState, setGameState] = useState(Array(20).fill(false).map(() => Array(20).fill(false)));
+    //const [gameState, setGameState] = useState(Array(20).fill(false).map(() => Array(20).fill(false)));
 
     function generateBoard(size) {
 
