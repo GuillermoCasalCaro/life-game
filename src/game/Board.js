@@ -1,36 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Options from './Options';
 import './game.css'
 
-const generateBoard = (gameSize) => {
-    let arrayAux = Array.from({ length: gameSize }, (v, i) => i);
-    return (
-        <>
-            {
-                arrayAux.map(() => {
-                    return <div className="board-row">
-                        {
-                            arrayAux.map(() => {
-                                return <div></div>
-                            })
-                        }
-                    </div>
-
-                })
-            }
-        </>
-    );
+const initilizeInternalState = (gameSize) => {
+    let board = [];
+    for (let i = 1; i <= gameSize; i++) {
+        let row = [];
+        for (let j = 1; j <= gameSize; j++) {
+            row.push(0);
+        }
+        board.push(row);
+    }
+    return board;
 }
 
 const Board = () => {
     const [gameSize, setGameSize] = useState(10);
+    const [internalState, setInternalState] = useState(initilizeInternalState(gameSize));
+
+    useEffect(() => {
+        setInternalState(initilizeInternalState(gameSize));
+    }, [gameSize]);
+
+    const generateBoardCell = (internalCell, i, j) => {
+        let cellClass = internalCell === 0 ? "cell-dead" : "cell-alive";
+        return <div id={`cell-${i}-${j}`} className={cellClass} onClick={() => { changeCellState(i, j) }}></div>
+    }
+
+    const generateBoardRow = (internalRow, i) => {
+        let row = [];
+        let j = 0;
+        internalRow.forEach(internalCell => {
+            row.push(generateBoardCell(internalCell, i, j));
+            j++;
+        });
+        return <div id={`row-${i}`} className="board-row">
+            {row}
+        </div>
+    }
+
+    const generateBoard = (internalState) => {
+        let board = [];
+        let i = 0;
+        internalState.forEach(internalRow => {
+            board.push(generateBoardRow(internalRow, i));
+            i++;
+        });
+        return <>
+            {board}
+        </>
+    }
+
+    const changeCellState = (i, j) => {
+        let newArr = [...internalState]
+        newArr[i][j] = newArr[i][j] === 0 ? 1 : 0;
+        setInternalState(newArr);
+    }
+
     return (
         <div className="board-container">
             <Options
                 size={gameSize}
                 setSize={setGameSize}
             />
-            {generateBoard(gameSize)}
+            {generateBoard(internalState)}
         </div >
     );
 }
