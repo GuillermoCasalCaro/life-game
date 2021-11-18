@@ -6,11 +6,18 @@
 .board-container > div > div {
     width: 10px;
     height: 10px;
-    background-color: grey;
     margin: 2px;
 }
 
 .board-row {
     display: flex;
     flex-direction: row;
+}
+
+.cell-alive {
+    background-color: green;
+}
+
+.cell-dead {
+    background-color: grey;
 }
