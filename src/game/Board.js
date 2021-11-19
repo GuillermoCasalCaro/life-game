@@ -82,6 +82,7 @@ const Board = () => {
         if (gameState === "stucked") {
             setGameState("iddle");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [internalState]);
 
     useEffect(() => {
@@ -119,10 +120,6 @@ const Board = () => {
         setInternalState(clearInternalState(gameSize));
         setGameState("iddle");
         generationNumber.current = 0;
-    }
-
-    const stuck = () => {
-        setGameState("stucked");
     }
 
     const generateBoard = (internalState) => {

@@ -1,6 +1,5 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import './game.css';
-import { calculateNextGeneration } from './Logic';
 
 const Options = ({ size, setSize, internalState, setInternalState, gameState, setGameState, generationNumber, speed, setSpeed, reset }) => {
 
