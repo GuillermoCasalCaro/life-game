@@ -1,34 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Options from './Options';
 import './game.css'
+
+const INITAL_GAME_SIZE = 15;
 
 const initilizeInternalState = (gameSize) => {
     let board = [];
     for (let i = 1; i <= gameSize; i++) {
         let row = [];
         for (let j = 1; j <= gameSize; j++) {
-            row.push(0);
+            if (i === 1) {
+                if (j === 2) {
+                    row.push(1);
+                } else {
+                    row.push(0);
+                }
+            } else if (i === 2) {
+                if (j === 3) {
+                    row.push(1);
+                } else {
+                    row.push(0);
+                }
+            } else if (i === 3 & j <= 3) {
+                row.push(1);
+            } else {
+                row.push(0);
+            }
         }
         board.push(row);
     }
     return board;
-}
+};
+
+const clearSelection = () => {
+    if (window.getSelection) {
+        if (window.getSelection().empty) {  // Chrome
+            window.getSelection().empty();
+        } else if (window.getSelection().removeAllRanges) {  // Firefox
+            window.getSelection().removeAllRanges();
+        }
+    } else if (document.selection) {  // IE?
+        document.selection.empty();
+    }
+};
 
 const Board = () => {
-    const [gameSize, setGameSize] = useState(10);
+    const [gameSize, setGameSize] = useState(INITAL_GAME_SIZE);
     const [internalState, setInternalState] = useState(initilizeInternalState(gameSize));
-    const [mouseClicked, setMouseClicked] = useState(false);
+    // const [mouseClicked, setMouseClicked] = useState(false);
+    const boardContainer = useRef();
+    var mouseClicked = useRef(false);
 
     useEffect(() => {
         setInternalState(initilizeInternalState(gameSize));
     }, [gameSize]);
 
+    // useEffect(() => {
+    //     generateBoard(internalState);
+    // }, [internalState]);
+
     useEffect(() => {
         document.onmousedown = ((e) => {
-            setMouseClicked(true);
+            // setMouseClicked(true);
+            mouseClicked.current = true;
         });
         document.onmouseup = ((e) => {
-            setMouseClicked(false);
+            // setMouseClicked(false);
+            mouseClicked.current = false;
+            clearSelection();
         });
     }, []);
 
@@ -62,7 +101,7 @@ const Board = () => {
             id={`cell-${i}-${j}`}
             className={cellClass}
             onMouseDown={() => { changeCellState(i, j) }}
-            onMouseEnter={() => { mouseClicked && changeCellState(i, j) }}
+            onMouseEnter={() => { mouseClicked.current && changeCellState(i, j); }}
         >
         </div>
     }
@@ -70,14 +109,19 @@ const Board = () => {
     const changeCellState = (i, j) => {
         let newArr = [...internalState]
         newArr[i][j] = newArr[i][j] === 0 ? 1 : 0;
-        setInternalState(newArr);
+        setInternalState([...newArr]);
     }
 
     return (
-        <div className="board-container">
+        <div
+            className="board-container"
+            ref={boardContainer}
+        >
             <Options
                 size={gameSize}
                 setSize={setGameSize}
+                internalState={internalState}
+                setInternalState={setInternalState}
             />
             {generateBoard(internalState)}
         </div >
