@@ -4,9 +4,9 @@
 }
 
 .board-container > div > div {
-    width: 10px;
-    height: 10px;
-    margin: 2px;
+    width: 15px;
+    height: 15px;
+    margin: 1px;
 }
 
 .board-row {
