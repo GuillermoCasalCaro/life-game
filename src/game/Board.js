@@ -17,14 +17,31 @@ const initilizeInternalState = (gameSize) => {
 const Board = () => {
     const [gameSize, setGameSize] = useState(10);
     const [internalState, setInternalState] = useState(initilizeInternalState(gameSize));
+    const [mouseClicked, setMouseClicked] = useState(false);
 
     useEffect(() => {
         setInternalState(initilizeInternalState(gameSize));
     }, [gameSize]);
 
-    const generateBoardCell = (internalCell, i, j) => {
-        let cellClass = internalCell === 0 ? "cell-dead" : "cell-alive";
-        return <div id={`cell-${i}-${j}`} className={cellClass} onClick={() => { changeCellState(i, j) }}></div>
+    useEffect(() => {
+        document.onmousedown = ((e) => {
+            setMouseClicked(true);
+        });
+        document.onmouseup = ((e) => {
+            setMouseClicked(false);
+        });
+    }, []);
+
+    const generateBoard = (internalState) => {
+        let board = [];
+        let i = 0;
+        internalState.forEach(internalRow => {
+            board.push(generateBoardRow(internalRow, i));
+            i++;
+        });
+        return <>
+            {board}
+        </>
     }
 
     const generateBoardRow = (internalRow, i) => {
@@ -39,16 +56,15 @@ const Board = () => {
         </div>
     }
 
-    const generateBoard = (internalState) => {
-        let board = [];
-        let i = 0;
-        internalState.forEach(internalRow => {
-            board.push(generateBoardRow(internalRow, i));
-            i++;
-        });
-        return <>
-            {board}
-        </>
+    const generateBoardCell = (internalCell, i, j) => {
+        let cellClass = internalCell === 0 ? "cell-dead" : "cell-alive";
+        return <div
+            id={`cell-${i}-${j}`}
+            className={cellClass}
+            onMouseDown={() => { changeCellState(i, j) }}
+            onMouseEnter={() => { mouseClicked && changeCellState(i, j) }}
+        >
+        </div>
     }
 
     const changeCellState = (i, j) => {
