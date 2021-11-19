@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Options from './Options';
+import { calculateNextGeneration } from './Logic';
 import './game.css'
 
 const INITAL_GAME_SIZE = 15;
+const INITAL_GAME_SPEED = 4;
+const ALIVE_CELL_COLORS = {
+    "iddle": "yellow",
+    "stucked": "red",
+    "running": "green"
+}
 
 const initilizeInternalState = (gameSize) => {
     let board = [];
@@ -32,6 +39,18 @@ const initilizeInternalState = (gameSize) => {
     return board;
 };
 
+const clearInternalState = (gameSize) => {
+    let board = [];
+    for (let i = 1; i <= gameSize; i++) {
+        let row = [];
+        for (let j = 1; j <= gameSize; j++) {
+            row.push(0);
+        }
+        board.push(row);
+    }
+    return board;
+};
+
 const clearSelection = () => {
     if (window.getSelection) {
         if (window.getSelection().empty) {  // Chrome
@@ -47,29 +66,64 @@ const clearSelection = () => {
 const Board = () => {
     const [gameSize, setGameSize] = useState(INITAL_GAME_SIZE);
     const [internalState, setInternalState] = useState(initilizeInternalState(gameSize));
-    // const [mouseClicked, setMouseClicked] = useState(false);
+    const [gameState, setGameState] = useState("iddle");
+    const [speed, setSpeed] = useState(INITAL_GAME_SPEED);
     const boardContainer = useRef();
     var mouseClicked = useRef(false);
+    var generationNumber = useRef(0);
+    var internalStateRef = useRef(internalState);
 
     useEffect(() => {
         setInternalState(initilizeInternalState(gameSize));
     }, [gameSize]);
 
-    // useEffect(() => {
-    //     generateBoard(internalState);
-    // }, [internalState]);
+    useEffect(() => {
+        internalStateRef.current = [...internalState];
+        if (gameState === "stucked") {
+            setGameState("iddle");
+        }
+    }, [internalState]);
+
+    useEffect(() => {
+        let timer = null;
+        if (gameState === "running") {
+            timer = setInterval(() => {
+                let prevInternalState = [...internalStateRef.current];
+                internalStateRef.current = [...calculateNextGeneration(internalStateRef.current)];
+                console.log(prevInternalState);
+                console.log(internalStateRef.current);
+                if (prevInternalState.toString() === internalStateRef.current.toString()) {
+                    setGameState("stucked");
+                } else {
+                    generationNumber.current = generationNumber.current + 1;
+                    setInternalState(internalStateRef.current);
+                }
+            }, 1000 / speed);
+        } else {
+            clearInterval(timer);
+        }
+        return () => clearInterval(timer);
+    }, [gameState, speed]);
 
     useEffect(() => {
         document.onmousedown = ((e) => {
-            // setMouseClicked(true);
             mouseClicked.current = true;
         });
         document.onmouseup = ((e) => {
-            // setMouseClicked(false);
             mouseClicked.current = false;
             clearSelection();
         });
     }, []);
+
+    const reset = () => {
+        setInternalState(clearInternalState(gameSize));
+        setGameState("iddle");
+        generationNumber.current = 0;
+    }
+
+    const stuck = () => {
+        setGameState("stucked");
+    }
 
     const generateBoard = (internalState) => {
         let board = [];
@@ -97,9 +151,10 @@ const Board = () => {
 
     const generateBoardCell = (internalCell, i, j) => {
         let cellClass = internalCell === 0 ? "cell-dead" : "cell-alive";
+        let cellColor = "cell-" + ALIVE_CELL_COLORS[gameState];
         return <div
             id={`cell-${i}-${j}`}
-            className={cellClass}
+            className={`${cellClass} ${cellColor}`}
             onMouseDown={() => { changeCellState(i, j) }}
             onMouseEnter={() => { mouseClicked.current && changeCellState(i, j); }}
         >
@@ -112,19 +167,31 @@ const Board = () => {
         setInternalState([...newArr]);
     }
 
+    console.log(gameState);
+
     return (
-        <div
-            className="board-container"
-            ref={boardContainer}
-        >
-            <Options
-                size={gameSize}
-                setSize={setGameSize}
-                internalState={internalState}
-                setInternalState={setInternalState}
-            />
-            {generateBoard(internalState)}
-        </div >
+        <div>
+            <div>
+                <Options
+                    size={gameSize}
+                    setSize={setGameSize}
+                    internalState={internalState}
+                    setInternalState={setInternalState}
+                    gameState={gameState}
+                    setGameState={setGameState}
+                    generationNumber={generationNumber}
+                    speed={speed}
+                    setSpeed={setSpeed}
+                    reset={reset}
+                />
+            </div>
+            <div
+                className="board-container"
+                ref={boardContainer}
+            >
+                {generateBoard(internalState)}
+            </div >
+        </div>
     );
 }
 

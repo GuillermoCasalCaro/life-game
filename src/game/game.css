@@ -14,8 +14,16 @@
     flex-direction: row;
 }
 
-.cell-alive {
+.cell-green {
     background-color: green;
+}
+
+.cell-yellow {
+    background-color: yellow;
+}
+
+.cell-red {
+    background-color: red;
 }
 
 .cell-dead {
