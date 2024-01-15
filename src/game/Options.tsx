@@ -1,7 +1,6 @@
-import React from 'react';
 import './game.css';
 
-const Options = ({ size, setSize, internalState, setInternalState, gameState, setGameState, generationNumber, speed, setSpeed, reset }) => {
+const Options = ({ size, setSize, gameState, setGameState, generationNumber, speed, setSpeed, reset }) => {
 
     return (
         <div className="options-container">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Options from './Options';
 import { calculateNextGeneration } from './Logic';
 import './game.css'
@@ -11,10 +11,10 @@ const ALIVE_CELL_COLORS = {
     "running": "green"
 }
 
-const initilizeInternalState = (gameSize) => {
-    let board = [];
+const initilizeInternalState = (gameSize: number) => {
+    const board: number[][] = [];
     for (let i = 1; i <= gameSize; i++) {
-        let row = [];
+        const row: number[] = [];
         for (let j = 1; j <= gameSize; j++) {
             if (i === 1) {
                 if (j === 2) {
@@ -28,7 +28,7 @@ const initilizeInternalState = (gameSize) => {
                 } else {
                     row.push(0);
                 }
-            } else if (i === 3 & j <= 3) {
+            } else if (i === 3 && j <= 3) {
                 row.push(1);
             } else {
                 row.push(0);
@@ -39,10 +39,10 @@ const initilizeInternalState = (gameSize) => {
     return board;
 };
 
-const clearInternalState = (gameSize) => {
-    let board = [];
+const clearInternalState = (gameSize: number) => {
+    const board: number[][] = [];
     for (let i = 1; i <= gameSize; i++) {
-        let row = [];
+        const row: number[] = [];
         for (let j = 1; j <= gameSize; j++) {
             row.push(0);
         }
@@ -53,13 +53,13 @@ const clearInternalState = (gameSize) => {
 
 const clearSelection = () => {
     if (window.getSelection) {
-        if (window.getSelection().empty) {  // Chrome
-            window.getSelection().empty();
-        } else if (window.getSelection().removeAllRanges) {  // Firefox
-            window.getSelection().removeAllRanges();
+        if (window.getSelection()?.empty) {  // Chrome
+            window.getSelection()?.empty();
+        } else if (window.getSelection()?.removeAllRanges) {  // Firefox
+            window.getSelection()?.removeAllRanges();
         }
-    } else if (document.selection) {  // IE?
-        document.selection.empty();
+    } else if ((document as any).selection as any) {  // IE?
+        (document as any).selection.empty();
     }
 };
 
@@ -68,10 +68,10 @@ const Board = () => {
     const [internalState, setInternalState] = useState(initilizeInternalState(gameSize));
     const [gameState, setGameState] = useState("iddle");
     const [speed, setSpeed] = useState(INITAL_GAME_SPEED);
-    const boardContainer = useRef();
-    var mouseClicked = useRef(false);
-    var generationNumber = useRef(0);
-    var internalStateRef = useRef(internalState);
+    const boardContainer = useRef<HTMLDivElement>(null);
+    const mouseClicked = useRef(false);
+    const generationNumber = useRef(0);
+    const internalStateRef = useRef(internalState);
 
     useEffect(() => {
         setInternalState(initilizeInternalState(gameSize));
@@ -82,14 +82,13 @@ const Board = () => {
         if (gameState === "stucked") {
             setGameState("iddle");
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [internalState]);
 
     useEffect(() => {
-        let timer = null;
+        let timer;
         if (gameState === "running") {
             timer = setInterval(() => {
-                let prevInternalState = [...internalStateRef.current];
+                const prevInternalState = [...internalStateRef.current];
                 internalStateRef.current = [...calculateNextGeneration(internalStateRef.current)];
                 console.log(prevInternalState);
                 console.log(internalStateRef.current);
@@ -123,7 +122,7 @@ const Board = () => {
     }
 
     const generateBoard = (internalState) => {
-        let board = [];
+        const board: JSX.Element[] = [];
         let i = 0;
         internalState.forEach(internalRow => {
             board.push(generateBoardRow(internalRow, i));
@@ -135,7 +134,7 @@ const Board = () => {
     }
 
     const generateBoardRow = (internalRow, i) => {
-        let row = [];
+        const row: JSX.Element[] = [];
         let j = 0;
         internalRow.forEach(internalCell => {
             row.push(generateBoardCell(internalCell, i, j));
@@ -147,8 +146,8 @@ const Board = () => {
     }
 
     const generateBoardCell = (internalCell, i, j) => {
-        let cellClass = internalCell === 0 ? "cell-dead" : "cell-alive";
-        let cellColor = "cell-" + ALIVE_CELL_COLORS[gameState];
+        const cellClass = internalCell === 0 ? "cell-dead" : "cell-alive";
+        const cellColor = "cell-" + ALIVE_CELL_COLORS[gameState];
         return <div
             id={`cell-${i}-${j}`}
             className={`${cellClass} ${cellColor}`}
@@ -159,7 +158,7 @@ const Board = () => {
     }
 
     const changeCellState = (i, j) => {
-        let newArr = [...internalState]
+        const newArr = [...internalState]
         newArr[i][j] = newArr[i][j] === 0 ? 1 : 0;
         setInternalState([...newArr]);
     }
@@ -172,8 +171,6 @@ const Board = () => {
                 <Options
                     size={gameSize}
                     setSize={setGameSize}
-                    internalState={internalState}
-                    setInternalState={setInternalState}
                     gameState={gameState}
                     setGameState={setGameState}
                     generationNumber={generationNumber}
