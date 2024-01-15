@@ -3,65 +3,13 @@ import Options from './Options';
 import { calculateNextGeneration } from './Logic';
 import './game.css'
 
-const INITAL_GAME_SIZE = 15;
+const INITAL_GAME_SIZE = 20;
 const INITAL_GAME_SPEED = 4;
 const ALIVE_CELL_COLORS = {
     "iddle": "yellow",
     "stucked": "red",
     "running": "green"
 }
-
-const initilizeInternalState = (gameSize: number) => {
-    const board: number[][] = [];
-    for (let i = 1; i <= gameSize; i++) {
-        const row: number[] = [];
-        for (let j = 1; j <= gameSize; j++) {
-            if (i === 1) {
-                if (j === 2) {
-                    row.push(1);
-                } else {
-                    row.push(0);
-                }
-            } else if (i === 2) {
-                if (j === 3) {
-                    row.push(1);
-                } else {
-                    row.push(0);
-                }
-            } else if (i === 3 && j <= 3) {
-                row.push(1);
-            } else {
-                row.push(0);
-            }
-        }
-        board.push(row);
-    }
-    return board;
-};
-
-const clearInternalState = (gameSize: number) => {
-    const board: number[][] = [];
-    for (let i = 1; i <= gameSize; i++) {
-        const row: number[] = [];
-        for (let j = 1; j <= gameSize; j++) {
-            row.push(0);
-        }
-        board.push(row);
-    }
-    return board;
-};
-
-const clearSelection = () => {
-    if (window.getSelection) {
-        if (window.getSelection()?.empty) {  // Chrome
-            window.getSelection()?.empty();
-        } else if (window.getSelection()?.removeAllRanges) {  // Firefox
-            window.getSelection()?.removeAllRanges();
-        }
-    } else if ((document as any).selection as any) {  // IE?
-        (document as any).selection.empty();
-    }
-};
 
 const Board = () => {
     const [gameSize, setGameSize] = useState(INITAL_GAME_SIZE);
@@ -106,10 +54,10 @@ const Board = () => {
     }, [gameState, speed]);
 
     useEffect(() => {
-        document.onmousedown = ((e) => {
+        document.onmousedown = (() => {
             mouseClicked.current = true;
         });
-        document.onmouseup = ((e) => {
+        document.onmouseup = (() => {
             mouseClicked.current = false;
             clearSelection();
         });
@@ -166,8 +114,8 @@ const Board = () => {
     console.log(gameState);
 
     return (
-        <div>
-            <div>
+        <div className='mt-5 d-flex flex-column align-items-center'>
+            <div className="mb-5" >
                 <Options
                     size={gameSize}
                     setSize={setGameSize}
@@ -190,3 +138,56 @@ const Board = () => {
 }
 
 export default Board;
+
+
+const initilizeInternalState = (gameSize: number) => {
+    const board: number[][] = [];
+    for (let i = 1; i <= gameSize; i++) {
+        const row: number[] = [];
+        for (let j = 1; j <= gameSize; j++) {
+            if (i === 1) {
+                if (j === 2) {
+                    row.push(1);
+                } else {
+                    row.push(0);
+                }
+            } else if (i === 2) {
+                if (j === 3) {
+                    row.push(1);
+                } else {
+                    row.push(0);
+                }
+            } else if (i === 3 && j <= 3) {
+                row.push(1);
+            } else {
+                row.push(0);
+            }
+        }
+        board.push(row);
+    }
+    return board;
+};
+
+const clearInternalState = (gameSize: number) => {
+    const board: number[][] = [];
+    for (let i = 1; i <= gameSize; i++) {
+        const row: number[] = [];
+        for (let j = 1; j <= gameSize; j++) {
+            row.push(0);
+        }
+        board.push(row);
+    }
+    return board;
+};
+
+const clearSelection = () => {
+    if (window.getSelection) {
+        if (window.getSelection()?.empty) {  // Chrome
+            window.getSelection()?.empty();
+        } else if (window.getSelection()?.removeAllRanges) {  // Firefox
+            window.getSelection()?.removeAllRanges();
+        }
+    } else if ((document as any).selection as any) {  // IE?
+        (document as any).selection.empty();
+    }
+};

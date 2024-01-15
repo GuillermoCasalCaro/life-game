@@ -1,12 +1,13 @@
-.board-container{
+.board-container {
     display: flex;
     flex-direction: column;
 }
 
-.board-container > div > div {
-    width: 15px;
-    height: 15px;
-    margin: 1px;
+.board-container>div>div {
+    width: 17px;
+    height: 17px;
+    padding: 1px;
+    border: solid 1px black;
 }
 
 .board-row {

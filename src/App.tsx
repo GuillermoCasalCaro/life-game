@@ -7,8 +7,10 @@ import './layout/layout.css'
 function App() {
   return (
     <div className="global-container">
-      <Header />
-      <Content />
+      <div>
+        <Header />
+        <Content />
+      </div>
       <Footer />
     </div>
   );

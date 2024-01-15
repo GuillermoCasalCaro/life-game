@@ -1,9 +1,9 @@
 .global-container {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .footer-container {
@@ -17,7 +17,7 @@
     justify-content: center;
 }
 
-.header-container > div {
+.header-container>div {
     margin: 0px 15px 0px 15px;
 }
 

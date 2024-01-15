@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <div className="footer-container">
       <div>
-        <p>2021 Life Game by Guillermo Casal Caro</p>
+        <p>{new Date().getFullYear()} Life Game by Guillermo Casal Caro</p>
       </div>
       <div>
         <p>All rigths reserved.</p>
